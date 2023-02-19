@@ -1,0 +1,165 @@
+openapi: 3.1.0
+x-stoplight:
+  id: 6jnadtzemddd6
+info:
+  title: Video API
+  version: '1.0'
+  contact:
+    name: Trea Hauet
+    email: trea@treahauet.com
+servers: []
+paths:
+  /live:
+    get:
+      summary: Get Livestream
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            text/event-stream:
+              schema:
+                anyOf:
+                  - $ref: '#/components/schemas/StreamStartEvent'
+                  - $ref: '#/components/schemas/StreamEndEvent'
+          headers: {}
+      operationId: get-live
+      description: 'Determine if there is a livestream currently ongoing and be updated of its status by way of [EventSource](https://developer.mozilla.org/en-US/docs/Web/API/EventSource) updates. When called, if a stream is already started, a StreamStartEvent model will be returned in the stream. By default, the consumer should assume there is not one started.'
+    parameters: []
+  /series:
+    get:
+      summary: Get All Series
+      tags: []
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  series:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Series'
+      operationId: get-series
+      description: Get a list of all series
+  '/series/{slug}':
+    parameters:
+      - schema:
+          type: string
+        name: slug
+        in: path
+        required: true
+    get:
+      summary: Get a Series
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  series:
+                    $ref: '#/components/schemas/Series'
+                  videos:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Video'
+      operationId: get-series-slug
+      description: Get an individual series and its videos
+components:
+  schemas:
+    Video:
+      title: Video
+      x-stoplight:
+        id: x7f85usd023da
+      type: object
+      examples:
+        - id: 63e3ca3b-d514-47e1-98ca-3a1be578f3e3
+          slug: setup-the-database
+          title: Setup the Database
+          description: |-
+            Qui omnis esse cupiditate culpa veritatis a. Velit est non debitis facilis. Perspiciatis asperiores unde illum ut cupiditate aut autem maiores. In velit et delectus ullam error deleniti. Omnis qui est ex dolorem iste.
+
+            Excepturi quis aut delectus eum recusandae nam. Et quas architecto aut. Pariatur et ab aut qui ut sit ex iusto. Dolorem possimus recusandae expedita eveniet dolor. Doloribus iste eum aperiam at incidunt dolor magni quia.
+          duration: 7200
+          streaming_starts: '2019-08-24T14:15:22Z'
+          streaming_ends: '2019-08-24T14:15:22Z'
+          thumbnail_uri: 'https://via.placeholder.com/1280x720?text=My%20Video'
+      properties:
+        id:
+          type: string
+        slug:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        duration:
+          type: integer
+        streaming_starts:
+          type: string
+          format: date-time
+        streaming_ends:
+          type: string
+          format: date-time
+        thumbnail_uri:
+          type: string
+        '':
+          type: string
+    Series:
+      title: Series
+      x-stoplight:
+        id: sso8no61b0tug
+      type: object
+      examples:
+        - id: 6efc15aa-bb11-4627-b22b-311d22c76008
+          slug: building-a-custom-live-and-vod-website
+          title: Building a Custom Live and VOD Website with Vue and NuxtJS
+          description: string
+          thumbnail_uri: 'https://via.placeholder.com/1280x720?text=My%20Video'
+          video_count: 4
+      properties:
+        id:
+          type: string
+        slug:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        thumbnail_uri:
+          type: string
+        video_count:
+          type: integer
+    StreamStartEvent:
+      title: StreamStartEvent
+      x-stoplight:
+        id: gja053hd101e8
+      type: object
+      properties:
+        id:
+          type: string
+        uri:
+          type: string
+          format: uri
+          readOnly: true
+        video:
+          $ref: '#/components/schemas/Video'
+    StreamEndEvent:
+      title: StreamEndEvent
+      x-stoplight:
+        id: 14tvgwt481dai
+      type: object
+      properties:
+        id:
+          type: string
+        next_stream:
+          type: string
+          format: date-time
+          readOnly: true
+  securitySchemes: {}
